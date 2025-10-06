@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .core.settings import settings
 from .api.router import api_router
 from .core.database import Base, engine
+from .core.settings import settings
 # Import models so they are registered with SQLAlchemy's Base
 from . import models  # noqa: F401
 
@@ -13,18 +13,10 @@ app = FastAPI(title="Flight Ticketing API", version="0.1.0")
 def on_startup():
     Base.metadata.create_all(bind=engine)
 
-"""CORS configuration: allow local dev origins and optional DEPLOY_ORIGIN from env"""
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-deploy_origin = getattr(settings, "DEPLOY_ORIGIN", None)
-if deploy_origin:
-    origins.append(deploy_origin)
-
+"""CORS for local dev: allow frontend at Vite dev server and file:// origins"""
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.CORS_ALLOW_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

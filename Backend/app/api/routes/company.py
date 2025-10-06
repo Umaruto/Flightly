@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from ...core.database import get_db
 from ...models.flight import Flight
 from ...models.airline_company import AirlineCompany
-from ...models.ticket import Ticket
+from ...models.ticket import Ticket, TicketStatus
 from ...schemas.company import FlightCreate, CompanyStatsOut
 from ...schemas.flight import FlightOut
 from ...core.deps import get_current_user, require_role
@@ -106,7 +106,11 @@ def company_stats(start: Optional[str] = Query(None), end: Optional[str] = Query
     completed_flights = len([f for f in flights if f.departure_time <= now])
     tickets = db.query(Ticket).join(Flight).filter(Flight.company_id == company.id).all()
     total_passengers = len(tickets)
-    total_revenue = sum([float(t.price_paid) for t in tickets if t.status == "PAID"])
+    total_revenue = sum([
+        float((t.price_paid or 0))
+        for t in tickets
+        if getattr(t.status, 'value', t.status) == TicketStatus.PAID.value
+    ])
     return CompanyStatsOut(
         total_flights=total_flights,
         active_flights=active_flights,

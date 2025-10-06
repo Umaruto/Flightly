@@ -66,6 +66,14 @@ class BannerOut(BaseModel):
         from_attributes = True
 
 
+class BannerUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    link_url: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
 class PlatformStatsOut(BaseModel):
     total_users: int
     total_companies: int

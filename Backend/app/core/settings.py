@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from typing import List
 
 class Settings(BaseSettings):
     # Core settings for early phases; more will be added in later phases
@@ -12,8 +13,11 @@ class Settings(BaseSettings):
     # Database (will be used in later phases)
     DATABASE_URL: str | None = None
 
-    # Optional deployed frontend origin for CORS (e.g., https://your-frontend.pythonanywhere.com)
-    DEPLOY_ORIGIN: str | None = None
+    # CORS
+    CORS_ALLOW_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
 
     class Config:
         env_file = ".env"

@@ -8,11 +8,11 @@ from ...core.deps import get_current_user, require_role
 from ...models.user import User, UserRole
 from ...models.airline_company import AirlineCompany
 from ...models.flight import Flight
-from ...models.ticket import Ticket
+from ...models.ticket import Ticket, TicketStatus
 from ...models.banner import Banner
 from ...schemas.admin import (
     UserUpdate, UserListOut, CompanyCreate, CompanyUpdate, CompanyOut,
-    BannerCreate, BannerOut, PlatformStatsOut, BookingAggregateOut
+    BannerCreate, BannerOut, BannerUpdate, PlatformStatsOut, BookingAggregateOut
 )
 
 router = APIRouter(dependencies=[Depends(require_role(UserRole.ADMIN))])
@@ -204,7 +204,7 @@ def list_banners(
 @router.patch("/content/banners/{banner_id}", response_model=BannerOut)
 def update_banner(
     banner_id: int,
-    banner_data: BannerCreate,  # reuse create schema for simplicity
+    banner_data: BannerUpdate,
     db: Session = Depends(get_db),
 ):
     banner = db.query(Banner).filter(Banner.id == banner_id).first()
@@ -263,7 +263,7 @@ def get_platform_stats(
     
     tickets = ticket_query.all()
     total_passengers = len(tickets)
-    total_revenue = sum([float(t.price_paid) for t in tickets if t.status == "PAID"])
+    total_revenue = sum([float(t.price_paid or 0) for t in tickets if getattr(t.status, 'value', t.status) == TicketStatus.PAID.value])
     
     return PlatformStatsOut(
         total_users=total_users,
