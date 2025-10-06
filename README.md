@@ -13,9 +13,10 @@ This project implements a flight ticketing web application.
 - Python 3.11+
 - Windows PowerShell or CMD
 
-## Backend: run locally (no Docker)
+## Backend: run locally
 
 1. Create and activate a virtual environment:
+
    - PowerShell:
      ```powershell
      cd backend
@@ -30,14 +31,17 @@ This project implements a flight ticketing web application.
      ```
 
 2. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. Configure environment:
+
    - In repo root, copy `.env.example` to `.env` and adjust values.
 
 4. Run the API:
+
    ```bash
    uvicorn backend.app.main:app --reload
    ```
@@ -49,3 +53,5 @@ This project implements a flight ticketing web application.
 ## Next steps
 
 Follow `Docs/Guide.md` Phase 1+ for auth, models, search, booking, dashboards, and deployment.
+
+link to project overview: https://youtu.be/g1PAxwXe5Y0?si=qw3mSLzoGExkuyD_

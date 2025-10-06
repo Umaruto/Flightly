@@ -41,9 +41,15 @@ def edit_flight(id: int, payload: FlightCreate, db: Session = Depends(get_db), c
 @router.delete("/flights/{id}")
 def delete_flight(id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     company = db.query(AirlineCompany).filter(AirlineCompany.manager_id == current_user.id).first()
+    if not company:
+        raise HTTPException(status_code=403, detail="No company assigned")
     flight = db.query(Flight).filter(Flight.id == id, Flight.company_id == company.id).first()
     if not flight:
         raise HTTPException(status_code=404, detail="Flight not found")
+    # Prevent deleting flights that already have tickets
+    has_tickets = db.query(Ticket).filter(Ticket.flight_id == flight.id).first() is not None
+    if has_tickets:
+        raise HTTPException(status_code=400, detail="Cannot delete a flight that has existing tickets")
     db.delete(flight)
     db.commit()
     return {"ok": True}

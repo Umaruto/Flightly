@@ -95,8 +95,17 @@ export default function FlightsList() {
                         !confirm("Delete this flight? This cannot be undone.")
                       )
                         return;
-                      await api.delete(`/api/company/flights/${f.id}`);
-                      loadFlights();
+                      try {
+                        await api.delete(`/api/company/flights/${f.id}`);
+                        loadFlights();
+                      } catch (e: any) {
+                        const detail = e?.response?.data?.detail;
+                        alert(
+                          typeof detail === "string"
+                            ? detail
+                            : "Failed to delete flight. It might have existing tickets or another constraint."
+                        );
+                      }
                     }}
                   >
                     Delete
