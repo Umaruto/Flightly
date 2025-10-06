@@ -73,3 +73,16 @@ Deploy, then you will get a Vercel URL like `https://flight-frontend.vercel.app`
 - DB migrations: The backend creates tables at startup automatically for now. Consider Alembic later.
 - Tokens: JWT secret is required; rotate if leaked.
 - With axios baseURL fallback to `window.location.origin`, you can host frontend and backend on same domain if desired.
+
+### Troubleshooting: psycopg2 ImportError on Render
+
+If deploy fails with an error like:
+
+`ImportError: ... psycopg2/_psycopg... undefined symbol: _PyInterpreterState_Get`
+
+This is caused by Python 3.13 ABI incompatibility with psycopg2. Fixes:
+
+- We added `Backend/runtime.txt` with `python-3.11.9`.
+- We set `PYTHON_VERSION=3.11.9` in `render.yaml` for the service.
+
+Redeploy the blueprint or service; Render will use Python 3.11 and the error should disappear.
