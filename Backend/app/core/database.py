@@ -5,6 +5,9 @@ from .settings import settings
 
 # Fallback to local SQLite for early dev if DATABASE_URL not set
 DATABASE_URL = settings.DATABASE_URL or "sqlite:///./dev.db"
+# Normalize legacy postgres scheme for SQLAlchemy
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # For SQLite need check_same_thread=False if used in single-threaded apps
 engine = create_engine(

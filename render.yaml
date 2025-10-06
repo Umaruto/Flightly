@@ -1,0 +1,26 @@
+# Render Blueprint: Backend (FastAPI) + PostgreSQL
+
+databases:
+  - name: flight-ticketing-db
+    plan: free
+
+services:
+  - type: web
+    name: flight-ticketing-api
+    env: python
+    plan: free
+    autoDeploy: true
+    rootDir: Backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flight-ticketing-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      # IMPORTANT: Update this value after your Vercel URL is known (e.g., https://flight-frontend.vercel.app)
+      - key: CORS_ALLOW_ORIGINS
+        value: "[]"

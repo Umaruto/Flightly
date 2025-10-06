@@ -18,6 +18,8 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ]
+    # Optional regex to allow dynamic origins (e.g., Vercel previews)
+    CORS_ALLOW_ORIGIN_REGEX: str | None = None
 
     class Config:
         env_file = ".env"
