@@ -1,0 +1,20 @@
+[service]
+name = "flight-ticketing"
+
+[env]
+# DATABASE_URL will be provided by Railway Postgres plugin if you add it
+# DATABASE_URL = "postgresql+psycopg2://..."
+JWT_SECRET = "change-me"
+ACCESS_TOKEN_EXPIRE_MINUTES = "60"
+CORS_ALLOW_ORIGINS = '["*"]'
+
+[build]
+builder = "NIXPACKS"
+
+[nixpacks]
+# Install python and pip packages in Backend
+phases = { install = "pip install -r Backend/requirements.txt" }
+
+[start]
+# Start backend using Procfile in repo root
+cmd = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --app-dir Backend"

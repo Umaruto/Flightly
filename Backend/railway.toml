@@ -1,0 +1,16 @@
+[service]
+name = "flight-backend"
+
+[env]
+# set at Railway dashboard or here (avoid committing secrets)
+# DATABASE_URL = "postgresql+psycopg2://<user>:<pass>@<host>:<port>/<db>"
+JWT_SECRET = "change-me"
+ACCESS_TOKEN_EXPIRE_MINUTES = "60"
+# Allow your frontend origins, e.g., https://your-frontend.up.railway.app
+CORS_ALLOW_ORIGINS = '["*"]'
+
+[build]
+builder = "NIXPACKS"
+
+[nixpacks]
+phases = { install = "pip install -r Backend/requirements.txt" }

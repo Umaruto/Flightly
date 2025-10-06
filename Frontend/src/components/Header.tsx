@@ -14,8 +14,12 @@ export default function Header() {
   return (
     <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 sticky top-0 z-30">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="text-xl font-bold text-blue-700">
-          ✈️ Flightly
+        <Link
+          to="/"
+          className="text-xl font-bold text-blue-700 flex items-center gap-2"
+        >
+          <img src="/favicon.svg" alt="Flightly" className="h-6 w-6" />
+          Flightly
         </Link>
         <button
           className="md:hidden px-3 py-1.5 rounded border text-sm"
