@@ -72,10 +72,18 @@ Frontend (React + Vite)
   - Output: dist
   - Env: VITE_API_BASE_URL = https://flight-ticketing-api.onrender.com
 
-## Admin user
+## Admin user / User / Company manager
 
 Name: admin
 email: admin@example.com
+password: 123456
+
+Name: manager
+email: manager@example.com
+password: 123456
+
+Name: user
+email: user@example.com
 password: 123456
 
 ## Troubleshooting
