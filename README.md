@@ -1,57 +1,95 @@
-# Flight Ticketing — Monorepo
+# Flightly — Deployed App and API
 
-This project implements a flight ticketing web application.
+Flightly is a flight ticketing web application with a FastAPI backend (Render) and a React frontend (Vercel).
 
-## Structure
+## Live
 
-- `backend/` — FastAPI app
-- `frontend/` — (to be added) React app
-- `Docs/` — Specs and implementation guide
+- Web App (Vercel): https://flightly-aruqsckz3-umars-projects-9160e705.vercel.app/
+- API Base (Render): https://flight-ticketing-api.onrender.com
+- Health: https://flight-ticketing-api.onrender.com/health
+- API Docs (Swagger): https://flight-ticketing-api.onrender.com/docs
 
-## Prerequisites
+## How it connects
 
-- Python 3.11+
-- Windows PowerShell or CMD
+- Frontend calls the backend via the environment variable VITE_API_BASE_URL.
+- In production on Vercel, VITE_API_BASE_URL is set to the Render API URL.
+- CORS on the backend is configured to allow the Vercel domain (and optional preview domains).
 
-## Backend: run locally
+## Project structure
 
-1. Create and activate a virtual environment:
+- Backend — FastAPI app (deployed to Render)
+- Frontend — React app (deployed to Vercel)
+- Docs — Guides and notes
 
-   - PowerShell:
-     ```powershell
-     cd backend
-     python -m venv .venv
-     .venv\Scripts\Activate.ps1
-     ```
-   - CMD:
-     ```cmd
-     cd backend
-     python -m venv .venv
-     .venv\Scripts\activate.bat
-     ```
+## Local development
 
-2. Install dependencies:
+Backend (FastAPI)
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+- Requirements: Python 3.11
+- Steps:
 
-3. Configure environment:
+  ```powershell
+  cd Backend
+  python -m venv .venv
+  .\.venv\Scripts\Activate.ps1
+  pip install -r requirements.txt
 
-   - In repo root, copy `.env.example` to `.env` and adjust values.
+  # Optionally create Backend\.env (copy from .env.example if present)
+  # Run dev server
+  uvicorn app.main:app --reload
+  ```
 
-4. Run the API:
+- Test: http://127.0.0.1:8000/health
 
-   ```bash
-   uvicorn backend.app.main:app --reload
-   ```
+Frontend (React + Vite)
 
-5. Test:
-   - Health: http://127.0.0.1:8000/health
-   - Ping: http://127.0.0.1:8000/api/ping
+- Requirements: Node.js LTS
+- Steps:
 
-## Next steps
+  ```powershell
+  cd Frontend
+  npm i
+  # Point frontend to your local API
+  $env:VITE_API_BASE_URL = "http://127.0.0.1:8000"
+  npm run dev
+  ```
 
-Follow `Docs/Guide.md` Phase 1+ for auth, models, search, booking, dashboards, and deployment.
+## Deployment summary
 
-link to project overview: https://youtu.be/g1PAxwXe5Y0?si=qw3mSLzoGExkuyD_
+- Backend on Render
+
+  - Python 3.11 (pinned for psycopg2 compatibility)
+  - Start: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+  - Key env vars:
+    - DATABASE_URL (Render Postgres)
+    - JWT_SECRET (random string)
+    - CORS_ALLOW_ORIGINS (JSON array, e.g. ["https://your-vercel-domain.vercel.app","http://localhost:5173"])
+    - Optional: CORS_ALLOW_ORIGIN_REGEX for Vercel previews (e.g. ^https://.\*\.vercel\.app$)
+
+- Frontend on Vercel
+  - Root Directory: Frontend
+  - Build: npm run build
+  - Output: dist
+  - Env: VITE_API_BASE_URL = https://flight-ticketing-api.onrender.com
+
+## Admin user
+
+Name: admin
+email: admin@example.com
+password: 123456
+
+## Troubleshooting
+
+- CORS: If the browser blocks requests, ensure your Vercel domain is listed in CORS_ALLOW_ORIGINS on Render (valid JSON).
+- 404 from API calls on Vercel: ensure VITE_API_BASE_URL is set to the Render API URL.
+- DB tables: The app creates tables on startup; to initialize manually:
+
+  ```powershell
+  $env:DATABASE_URL = "postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require"
+  python -c "from app.core.database import Base, engine; Base.metadata.create_all(bind=engine); print('Tables created')"
+  ```
+
+## Links
+
+- Project overview (YouTube): https://youtu.be/g1PAxwXe5Y0?si=qw3mSLzoGExkuyD_
+- Live web page: https://flightly-aruqsckz3-umars-projects-9160e705.vercel.app/
